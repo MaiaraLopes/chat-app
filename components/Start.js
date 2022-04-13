@@ -8,10 +8,8 @@ import {
   ImageBackground,
   TouchableOpacity,
   Image,
+  Pressable,
 } from "react-native";
-
-import BackgroundImage from "../assets/background-image.png";
-import icon from "../assets/icon.svg";
 
 export default class Start extends React.Component {
   constructor(props) {
@@ -36,7 +34,7 @@ export default class Start extends React.Component {
     return (
       <View style={styles.container}>
         <ImageBackground
-          source={BackgroundImage}
+          source={require("../assets/background-image.png")}
           resizeMode="cover"
           style={styles.backgroundImage}
         >
@@ -46,7 +44,10 @@ export default class Start extends React.Component {
 
           <View style={styles.box}>
             <View style={styles.inputBox}>
-              <Image source={icon} style={styles.icon} />
+              <Image
+                source={require("../assets/icon.png")}
+                style={styles.icon}
+              />
               <TextInput
                 style={styles.inputText}
                 onChangeText={(text) => this.setState({ name: text })}
@@ -61,34 +62,34 @@ export default class Start extends React.Component {
 
             <View style={styles.colors}>
               <TouchableOpacity
-                onPress={() => this.changeBgColor(this.color.option1)}
+                onPress={() => this.changeBgColor(this.colors.option1)}
                 style={styles.option1}
               />
               <TouchableOpacity
-                onPress={() => this.changeBgColor(this.color.option2)}
+                onPress={() => this.changeBgColor(this.colors.option2)}
                 style={styles.option2}
               />
               <TouchableOpacity
-                onPress={() => this.changeBgColor(this.color.option3)}
+                onPress={() => this.changeBgColor(this.colors.option3)}
                 style={styles.option3}
               />
               <TouchableOpacity
-                onPress={() => this.changeBgColor(this.color.option4)}
+                onPress={() => this.changeBgColor(this.colors.option4)}
                 style={styles.option4}
               />
             </View>
-            <View>
-              <Button
-                style={styles.button}
-                onPress={() =>
-                  this.props.navigation.navigate("Chat", {
-                    name: this.state.name,
-                    bgColor: this.state.bgColor,
-                  })
-                }
-                title="Start Chatting"
-              />
-            </View>
+
+            <Pressable
+              style={styles.button}
+              onPress={() =>
+                this.props.navigation.navigate("Chat", {
+                  name: this.state.name,
+                  bgColor: this.state.bgColor,
+                })
+              }
+            >
+              <Text style={styles.btnText}>Start Chatting</Text>
+            </Pressable>
           </View>
         </ImageBackground>
       </View>
@@ -140,15 +141,18 @@ const styles = StyleSheet.create({
   },
 
   icon: {
-    width: 20,
-    height: 20,
+    width: 25,
+    height: 25,
+    marginLeft: 10,
+    marginRight: 5,
   },
 
-  input: {
+  inputText: {
     fontSize: 16,
     fontWeight: "300",
     color: "#757083",
     opacity: 0.5,
+    width: "100%",
   },
 
   colorBox: {
@@ -205,5 +209,11 @@ const styles = StyleSheet.create({
     backgroundColor: "#757083",
     alignItems: "center",
     justifyContent: "center",
+  },
+
+  btnText: {
+    color: "#fff",
+    fontSize: 16,
+    fontWeight: "600",
   },
 });
