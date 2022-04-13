@@ -2,10 +2,12 @@ import React from "react";
 import { View, Text } from "react-native";
 
 export default class Chat extends React.Component {
-  render() {
+  componentDidMount() {
     let name = this.props.route.params.name;
     this.props.navigation.setOptions({ title: name });
+  }
 
+  render() {
     const { bgColor } = this.props.route.params;
 
     return (
@@ -14,7 +16,7 @@ export default class Chat extends React.Component {
           flex: 1,
           justifyContent: "center",
           alignItems: "center",
-          bgColor: bgColor,
+          backgroundColor: bgColor,
         }}
       >
         <Text>Hello Chat!</Text>
