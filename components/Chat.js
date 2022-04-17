@@ -38,52 +38,35 @@ export default class Chat extends React.Component {
     let name = this.props.route.params.name;
     this.props.navigation.setOptions({ title: name });
 
-    this.referenceChatMessages = firebase
-      .firestore()
-      .collection("messages")
-      .where("uid", "==", this.state.uid);
-    this.unsubscribeChatUser = this.referenceChatMessagesUser.onSnapshot(
-      this.onCollectionUpdate
-    );
-
     //Authentication
-    this.authUnsubscribe = firebase.auth().onAuthStateChanged((user) => {
+    this.unsubscribe = this.referenceChatMessages
+      .orderBy("createdAt", "desc")
+      .onSnapshopt(this.onCollectionUpdate);
+
+    this.authUnsubscribe = firebase.auth().onAuthStateChanged(async (user) => {
       if (!user) {
-        firebase.auth().singInAnonymously();
+        await firebase.auth().singInAnonymously();
       }
 
       this.setState({
         uid: user.uid,
         messages: [],
-        loggedInText: "Hello",
+        user: {
+          _id: user.uid,
+          name: name,
+          avatar: "https://placeimg.com/140/140/any",
+        },
       });
-      this.unsubscribe = this.referenceChatMessages
-        .orderBy("createdAt", "desc")
-        .onSnapshopt(this.onCollectionUpdate);
-    });
-    this.setState({
-      messages: [
-        {
-          _id: 1,
-          text: `Hello, ${name}`,
-          createdAt: new Date(),
-          user: {
-            _id: 2,
-            name: "React Native",
-            avatar: "https://placeimg.com/140/140/any",
-          },
-        },
-        {
-          _id: 2,
-          text: `${name} has entered the chat!`,
-          createdAt: new Date(),
-          system: true,
-        },
-      ],
+
+      this.referenceChatMessages = firebase
+        .firestore()
+        .collection("messages")
+        .where("uid", "==", this.state.uid);
     });
   }
 
   componentWillUnmount() {
+    this.authUnsubscribe();
     this.unsubscribe();
   }
 
