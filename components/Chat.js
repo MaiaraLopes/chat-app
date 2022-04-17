@@ -30,6 +30,7 @@ export default class Chat extends React.Component {
       firebase.initializeApp(firebaseConfig);
     }
 
+    //References the database
     this.referenceChatMessages = firebase.firestore().collection("messages");
   }
 
@@ -38,16 +39,18 @@ export default class Chat extends React.Component {
     let name = this.props.route.params.name;
     this.props.navigation.setOptions({ title: name });
 
-    //Authentication
+    //Gets updates from collection
     this.unsubscribe = this.referenceChatMessages
       .orderBy("createdAt", "desc")
       .onSnapshot(this.onCollectionUpdate);
 
+    //Authentication
     this.authUnsubscribe = firebase.auth().onAuthStateChanged(async (user) => {
       if (!user) {
-        await firebase.auth().singInAnonymously();
+        await firebase.auth().signInAnonymously();
       }
 
+      //Update user state with active user data
       this.setState({
         uid: user.uid,
         messages: [],
@@ -58,7 +61,8 @@ export default class Chat extends React.Component {
         },
       });
 
-      this.referenceChatMessages = firebase
+      //Messages current user
+      this.referenceChatMessagesUser = firebase
         .firestore()
         .collection("messages")
         .where("uid", "==", this.state.uid);
@@ -72,6 +76,7 @@ export default class Chat extends React.Component {
 
   onCollectionUpdate = (querySnapshot) => {
     const messages = [];
+    //Going through each document of the collection
     querySnapshot.forEach((doc) => {
       let data = doc.data();
       messages.push({
@@ -96,10 +101,12 @@ export default class Chat extends React.Component {
     }));
   }
 
+  //Adding messages to the database
   addMessage() {
     const message = this.state.messages[0];
     this.referenceChatMessages.add({
-      name: message._id,
+      uid: this.state.uid,
+      _id: message._id,
       text: message.text,
       createdAt: message.createdAt,
       user: this.state.user,
@@ -120,6 +127,7 @@ export default class Chat extends React.Component {
   }
 
   render() {
+    //Bakcgorund color changed on Start screen
     const { bgColor } = this.props.route.params;
 
     return (
@@ -133,7 +141,11 @@ export default class Chat extends React.Component {
           renderBubble={this.renderBubble.bind(this)}
           messages={this.state.messages}
           onSend={(messages) => this.onSend(messages)}
-          user={{ _id: 1 }}
+          user={{
+            _id: this.state.user._id,
+            name: this.state.name,
+            avatar: this.state.user.avatar,
+          }}
         />
         <Text>{this.state.loggedInText}</Text>
 
