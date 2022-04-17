@@ -41,7 +41,7 @@ export default class Chat extends React.Component {
     //Authentication
     this.unsubscribe = this.referenceChatMessages
       .orderBy("createdAt", "desc")
-      .onSnapshopt(this.onCollectionUpdate);
+      .onSnapshot(this.onCollectionUpdate);
 
     this.authUnsubscribe = firebase.auth().onAuthStateChanged(async (user) => {
       if (!user) {
