@@ -135,11 +135,8 @@ export default class Chat extends React.Component {
           renderBubble={this.renderBubble.bind(this)}
           messages={this.state.messages}
           onSend={(messages) => this.onSend(messages)}
-          user={{
-            _id: this.state.user._id,
-            user: this.state.user,
-            avatar: this.state.user.avatar,
-          }}
+          renderUsernameOnMessage={true}
+          user={this.state.user}
         />
         <Text>{this.state.loggedInText}</Text>
 
