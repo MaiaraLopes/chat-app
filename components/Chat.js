@@ -104,13 +104,7 @@ export default class Chat extends React.Component {
 
   //Adding messages to the database
   addMessage(message) {
-    this.referenceChatMessages.add({
-      uid: this.state.uid,
-      _id: message._id,
-      text: message.text,
-      createdAt: message.createdAt,
-      user: this.state.user,
-    });
+    this.referenceChatMessages.add(message);
   }
 
   renderBubble(props) {
@@ -143,7 +137,7 @@ export default class Chat extends React.Component {
           onSend={(messages) => this.onSend(messages)}
           user={{
             _id: this.state.user._id,
-            name: this.state.name,
+            name: this.state.user.name,
             avatar: this.state.user.avatar,
           }}
         />
