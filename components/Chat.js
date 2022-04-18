@@ -97,9 +97,6 @@ export default class Chat extends React.Component {
 
   onSend(messages = []) {
     this.addMessage(messages[0]);
-    this.setState((previousState) => ({
-      messages: GiftedChat.append(previousState.messages, messages),
-    }));
   }
 
   //Adding messages to the database
