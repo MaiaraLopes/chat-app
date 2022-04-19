@@ -1,8 +1,10 @@
 import React from "react";
 import { View, Text, Platform, KeyboardAvoidingView } from "react-native";
-import { Bubble, GiftedChat } from "react-native-gifted-chat";
+import { Bubble, GiftedChat, InputToolbar } from "react-native-gifted-chat";
 const firebase = require("firebase");
 require("firebase/firestore");
+import AsyncStorage from "@react-native-community/async-storage";
+import NetInfo from "@react-native-community/netinfo";
 
 const firebaseConfig = {
   apiKey: "AIzaSyDuygtWlbCPsFf3xQu4mT2iwMpYRkRRnT8",
@@ -34,6 +36,16 @@ export default class Chat extends React.Component {
     this.referenceChatMessages = firebase.firestore().collection("messages");
   }
 
+  async getMessages() {
+    let messages = "";
+    try {
+      messages = (await AsyncStorage.getItem("messages")) || [];
+      this.setState({ messages: JSON.parse(messages) });
+    } catch (error) {
+      console.log(error.message);
+    }
+  }
+
   componentDidMount() {
     //User name shows at the top of the screen
     let name = this.props.route.params.name;
@@ -48,6 +60,9 @@ export default class Chat extends React.Component {
     this.authUnsubscribe = firebase.auth().onAuthStateChanged(async (user) => {
       if (!user) {
         await firebase.auth().signInAnonymously();
+
+        //Get messages from asyncStorage
+        this.getMessages();
       }
 
       //Update user state with active user data
@@ -66,6 +81,15 @@ export default class Chat extends React.Component {
         .firestore()
         .collection("messages")
         .where("uid", "==", this.state.uid);
+    });
+
+    //Checking if the user is online
+    NetInfo.fetch().then((connection) => {
+      if (connection.isConnected) {
+        console.log("online");
+      } else {
+        console.log("offline");
+      }
     });
   }
 
@@ -96,12 +120,37 @@ export default class Chat extends React.Component {
   };
 
   onSend(messages = []) {
+    //How to add this.saveMessages();?
     this.addMessage(messages[0]);
   }
 
   //Adding messages to the database
   addMessage(message) {
     this.referenceChatMessages.add(message);
+  }
+
+  //Saving messages asynchronously
+  async saveMessages() {
+    try {
+      await AsyncStorage.setItem(
+        "messages",
+        JSON.stringify(this.state.messages)
+      );
+    } catch (error) {
+      console.log(error.message);
+    }
+  }
+
+  //Deleting messages
+  async deleteMessages() {
+    try {
+      await AsyncStorage.removeItem("messages");
+      this.setState({
+        messages: [],
+      });
+    } catch (error) {
+      console.log(error.message);
+    }
   }
 
   renderBubble(props) {
@@ -115,6 +164,13 @@ export default class Chat extends React.Component {
         }}
       />
     );
+  }
+
+  renderInputToolbar(props) {
+    if (this.state.isConnected == false) {
+    } else {
+      return <InputToolbar {...props} />;
+    }
   }
 
   render() {
