@@ -1,10 +1,19 @@
 import React from "react";
-import { View, Text, Platform, KeyboardAvoidingView } from "react-native";
+import {
+  View,
+  Text,
+  Platform,
+  KeyboardAvoidingView,
+  LogBox,
+} from "react-native";
 import { Bubble, GiftedChat, InputToolbar } from "react-native-gifted-chat";
 const firebase = require("firebase");
 require("firebase/firestore");
+LogBox.ignoreLogs(['Setting a timer', 'AsyncStorage has been extracted from react-native]);
+
 import AsyncStorage from "@react-native-community/async-storage";
 import NetInfo from "@react-native-community/netinfo";
+
 
 const firebaseConfig = {
   apiKey: "AIzaSyDuygtWlbCPsFf3xQu4mT2iwMpYRkRRnT8",
