@@ -9,11 +9,12 @@ import {
 import { Bubble, GiftedChat, InputToolbar } from "react-native-gifted-chat";
 const firebase = require("firebase");
 require("firebase/firestore");
-LogBox.ignoreLogs(['Setting a timer', 'AsyncStorage has been extracted from react-native]);
-
-import AsyncStorage from "@react-native-community/async-storage";
+LogBox.ignoreLogs([
+  "Setting a timer",
+  "AsyncStorage has been extracted from react-native",
+]);
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import NetInfo from "@react-native-community/netinfo";
-
 
 const firebaseConfig = {
   apiKey: "AIzaSyDuygtWlbCPsFf3xQu4mT2iwMpYRkRRnT8",
@@ -129,8 +130,8 @@ export default class Chat extends React.Component {
   };
 
   onSend(messages = []) {
-    //How to add this.saveMessages();?
     this.addMessage(messages[0]);
+    this.saveMessages();
   }
 
   //Adding messages to the database
