@@ -61,11 +61,6 @@ export default class Chat extends React.Component {
     let name = this.props.route.params.name;
     this.props.navigation.setOptions({ title: name });
 
-    //Gets updates from collection
-    this.unsubscribe = this.referenceChatMessages
-      .orderBy("createdAt", "desc")
-      .onSnapshot(this.onCollectionUpdate);
-
     //Authentication
     this.authUnsubscribe = firebase.auth().onAuthStateChanged(async (user) => {
       if (!user) {
@@ -96,7 +91,12 @@ export default class Chat extends React.Component {
     //Checking if the user is online
     NetInfo.fetch().then((connection) => {
       if (connection.isConnected) {
+        this.setState({ isConnected: true });
         console.log("online");
+        //Gets updates from collection
+        this.unsubscribe = this.referenceChatMessages
+          .orderBy("createdAt", "desc")
+          .onSnapshot(this.onCollectionUpdate);
       } else {
         console.log("offline");
       }
