@@ -124,6 +124,7 @@ export default class Chat extends React.Component {
         },
       });
     });
+    this.saveMessages();
     this.setState({
       messages: messages,
     });
@@ -131,7 +132,6 @@ export default class Chat extends React.Component {
 
   onSend(messages = []) {
     this.addMessage(messages[0]);
-    this.saveMessages();
   }
 
   //Adding messages to the database
