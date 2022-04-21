@@ -12,6 +12,7 @@ require("firebase/firestore");
 LogBox.ignoreLogs([
   "Setting a timer",
   "AsyncStorage has been extracted from react-native",
+  "Possible Unhandled Promise Rejection",
 ]);
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import NetInfo from "@react-native-community/netinfo";
@@ -46,66 +47,53 @@ export default class Chat extends React.Component {
     this.referenceChatMessages = firebase.firestore().collection("messages");
   }
 
-  async getMessages() {
-    let messages = "";
-    try {
-      messages = (await AsyncStorage.getItem("messages")) || [];
-      this.setState({ messages: JSON.parse(messages) });
-    } catch (error) {
-      console.log(error.message);
-    }
-  }
-
   componentDidMount() {
     //User name shows at the top of the screen
     let name = this.props.route.params.name;
     this.props.navigation.setOptions({ title: name });
 
-    //Authentication
-    this.authUnsubscribe = firebase.auth().onAuthStateChanged(async (user) => {
-      if (!user) {
-        await firebase.auth().signInAnonymously();
-
-        //Get messages from asyncStorage
-        this.getMessages();
-      }
-
-      //Update user state with active user data
-      this.setState({
-        uid: user.uid,
-        messages: [],
-        user: {
-          _id: user.uid,
-          name: name,
-          avatar: "https://placeimg.com/140/140/any",
-        },
-      });
-
-      //Messages current user
-      this.referenceChatMessagesUser = firebase
-        .firestore()
-        .collection("messages")
-        .where("uid", "==", this.state.uid);
-    });
-
     //Checking if the user is online
     NetInfo.fetch().then((connection) => {
       if (connection.isConnected) {
         this.setState({ isConnected: true });
+        //Authentication
+        this.authUnsubscribe = firebase
+          .auth()
+          .onAuthStateChanged(async (user) => {
+            if (!user) {
+              await firebase.auth().signInAnonymously();
+            }
+
+            //Gets updates from collection
+            this.unsubscribe = this.referenceChatMessages
+              .orderBy("createdAt", "desc")
+              .onSnapshot(this.onCollectionUpdate);
+
+            //Update user state with active user data
+            this.setState({
+              uid: user.uid,
+              user: {
+                _id: user.uid,
+                name: name,
+                avatar: "https://placeimg.com/140/140/any",
+              },
+            });
+          });
         console.log("online");
-        //Gets updates from collection
-        this.unsubscribe = this.referenceChatMessages
-          .orderBy("createdAt", "desc")
-          .onSnapshot(this.onCollectionUpdate);
       } else {
+        this.setState({ isConnected: false });
+        //Get messages from asyncStorage
+        this.getMessages();
         console.log("offline");
       }
     });
   }
 
   componentWillUnmount() {
-    this.authUnsubscribe();
-    this.unsubscribe();
+    if (this.state.isConnected) {
+      this.authUnsubscribe();
+      this.unsubscribe();
+    }
   }
 
   onCollectionUpdate = (querySnapshot) => {
@@ -124,10 +112,15 @@ export default class Chat extends React.Component {
         },
       });
     });
-    this.saveMessages();
-    this.setState({
-      messages: messages,
-    });
+
+    this.setState(
+      {
+        messages: messages,
+      },
+      () => {
+        this.saveMessages();
+      }
+    );
   };
 
   onSend(messages = []) {
@@ -137,6 +130,16 @@ export default class Chat extends React.Component {
   //Adding messages to the database
   addMessage(message) {
     this.referenceChatMessages.add(message);
+  }
+
+  async getMessages() {
+    let messages = "";
+    try {
+      messages = (await AsyncStorage.getItem("messages")) || [];
+      this.setState({ messages: JSON.parse(messages) });
+    } catch (error) {
+      console.log(error.message);
+    }
   }
 
   //Saving messages asynchronously
@@ -176,12 +179,12 @@ export default class Chat extends React.Component {
     );
   }
 
-  renderInputToolbar(props) {
+  renderInputToolbar = (props) => {
     if (this.state.isConnected == false) {
     } else {
       return <InputToolbar {...props} />;
     }
-  }
+  };
 
   render() {
     //Bakcgorund color changed on Start screen
