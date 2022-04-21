@@ -54,7 +54,7 @@ export default class Chat extends React.Component {
 
     //Checking if the user is online
     NetInfo.fetch().then((connection) => {
-      if (connection.isConnected) {
+      if (false && connection.isConnected) {
         this.setState({ isConnected: true });
         //Authentication
         this.authUnsubscribe = firebase
