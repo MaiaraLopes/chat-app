@@ -9,17 +9,18 @@ import {
 import { Bubble, GiftedChat, InputToolbar } from "react-native-gifted-chat";
 const firebase = require("firebase");
 require("firebase/firestore");
+
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import NetInfo from "@react-native-community/netinfo";
+import MapView from "react-native-maps";
+import CustomActions from "./CustomActions";
+
+//Ignoring warning messages in the app
 LogBox.ignoreLogs([
   "Setting a timer",
   "AsyncStorage has been extracted from react-native",
   "Possible Unhandled Promise Rejection",
 ]);
-import AsyncStorage from "@react-native-async-storage/async-storage";
-import NetInfo from "@react-native-community/netinfo";
-import * as Permissions from "expo-permissions";
-import * as ImagePicker from "expo-image-picker";
-import * as Location from "expo-location";
-import MapView from "react-native-maps";
 
 const firebaseConfig = {
   apiKey: "AIzaSyDuygtWlbCPsFf3xQu4mT2iwMpYRkRRnT8",
@@ -35,12 +36,14 @@ export default class Chat extends React.Component {
     this.state = {
       messages: [],
       uid: "",
-      loggedInText: "",
+      isConnected: false,
       user: {
         _id: "",
         name: "",
         avatar: "",
       },
+      image: null,
+      location: null,
     };
 
     if (!firebase.apps.length) {
@@ -114,6 +117,8 @@ export default class Chat extends React.Component {
           name: data.user.name,
           avatar: data.user.avatar,
         },
+        iamge: data.image || null,
+        location: data.location || null,
       });
     });
 
@@ -128,11 +133,12 @@ export default class Chat extends React.Component {
   };
 
   onSend(messages = []) {
-    this.addMessage(messages[0]);
+    this.addMessages(messages[0]);
+    this.saveMessages();
   }
 
   //Adding messages to the database
-  addMessage(message) {
+  addMessages(message) {
     this.referenceChatMessages.add(message);
   }
 
@@ -170,24 +176,58 @@ export default class Chat extends React.Component {
     }
   }
 
+  //Speech bubble customization
   renderBubble(props) {
     return (
       <Bubble
         {...props}
         wrapperStyle={{
           right: {
-            backgroundColor: "#000",
+            backgroundColor: "#C3C5C8",
+          },
+          left: {
+            backgroundColor: "#956F6A",
           },
         }}
       />
     );
   }
 
+  //Return input toolbar for user to tyepe only when online
   renderInputToolbar = (props) => {
     if (this.state.isConnected == false) {
     } else {
       return <InputToolbar {...props} />;
     }
+  };
+
+  //Returns an action button to access images and location
+  renderCustomActions = (props) => {
+    return <CustomActions {...props} />;
+  };
+
+  //Returns a map view when user send their location
+  renderCustomView = (props) => {
+    const { currentMessage } = props;
+    if (currentMessage.location) {
+      return (
+        <MapView
+          style={{
+            width: 150,
+            height: 100,
+            borderRadius: 13,
+            margin: 3,
+          }}
+          region={{
+            latitude: currentMessage.location.latitude,
+            longitude: currentMessage.location.longitude,
+            latitudeDelta: 0.0922,
+            longitudeDelta: 0.0421,
+          }}
+        />
+      );
+    }
+    return null;
   };
 
   render() {
@@ -208,6 +248,8 @@ export default class Chat extends React.Component {
           onSend={(messages) => this.onSend(messages)}
           renderUsernameOnMessage={true}
           user={this.state.user}
+          renderCustomActions={this.renderCustomActions}
+          renderCustomView={this.renderCustomView}
         />
         <Text>{this.state.loggedInText}</Text>
 
