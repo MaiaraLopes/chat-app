@@ -3,6 +3,7 @@ import PropTypes from "prop-types";
 import { StyleSheet, Text, ToutchableOpacity, View } from "react-native";
 import * as ImagePicker from "expo-image-picker";
 import * as Location from "expo-location";
+import * as Permissions from "expo-permissions";
 import firebase from "firebase";
 import "firebase/firestore";
 
@@ -84,7 +85,9 @@ export default class CustomActions extends React.Component {
   getLocation = async () => {
     try {
       //Asking permission to access user's location
-      const { status } = await Permissions.askAsync(Permissions.LOCATION);
+      const { status } = await Permissions.askAsync(
+        Permissions.LOCATION_FOREGROUND
+      );
       if (status === "granted") {
         let result = await Location.getCurrentPositionAsync({}).catch(
           (error) => {
