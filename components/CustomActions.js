@@ -6,7 +6,7 @@ import * as Location from "expo-location";
 import firebase from "firebase";
 import "firebase/firestore";
 
-export default class CustomActions extends React.Componet {
+export default class CustomActions extends React.Component {
   //Choose image from the user's device
   pickImage = async () => {
     //Asking permission to access user's gallery
@@ -54,6 +54,32 @@ export default class CustomActions extends React.Componet {
     }
   };
 
+  //Upload image to Firestore
+  uploadImageFetch = async (uri) => {
+    const blob = await new Promise((resolve, reject) => {
+      const xhr = new XMLHttpRequest();
+      xhr.onload = function () {
+        resolve(xhr.response);
+      };
+      xhr.onerror = function (e) {
+        console.log(e);
+        reject(new TypeError("Network request failed"));
+      };
+      xhr.responseType = "blob";
+      xhr.open("GET", uri, true);
+      xhr.send(null);
+    });
+    const imageNameBefore = uri.split("/");
+    const imageName = imageNameBefore[imageNameBefore.length - 1];
+
+    const ref = firebase.storage().ref().child(`images/${imageName}`);
+    const snapshot = await ref.put(blob);
+
+    blob.close();
+
+    return await snapshot.ref.getDownloadURL();
+  };
+
   //Get user's geolocation
   getLocation = async () => {
     try {
@@ -81,32 +107,6 @@ export default class CustomActions extends React.Componet {
     }
   };
 
-  //Upload image to Firestore
-  uploadImageFetch = async (uri) => {
-    const blob = await new Promise((resolve, reject) => {
-      const xhr = new XMLHttpRequest();
-      xhr.onload = function () {
-        resolve(xhr.response);
-      };
-      xhr.onerror = function (e) {
-        console.log(e);
-        reject(new TypeError("Network request failed"));
-      };
-      xhr.responseType = "blob";
-      xhr.open("GET", uri, true);
-      xhr.send(null);
-    });
-    const imageNameBefore = uri.split("/");
-    const imageName = imageNameBefore[imageNameBefore.length - 1];
-
-    const ref = firebase.storage().ref().child(`images/${imageName}`);
-    const snapshot = await ref.put(blob);
-
-    blob.close();
-
-    return await snapshot.ref.getDownloadURL();
-  };
-
   onActionPress = () => {
     const options = [
       "Choose from Library",
@@ -124,13 +124,13 @@ export default class CustomActions extends React.Componet {
         switch (buttonIndex) {
           case 0:
             console.log("user wants to pick an image");
-            return this.pickImage;
+            return this.pickImage();
           case 1:
             console.log("user wants to take a picture");
-            return this.takePhoto;
+            return this.takePhoto();
           case 2:
             console.log("user wants to get their location");
-            return this.getLocation;
+            return this.getLocation();
         }
       }
     );

@@ -9,7 +9,7 @@ import Chat from "./components/Chat";
 
 const Stack = createStackNavigator();
 
-export default class HelloWorld extends React.Component {
+export default class App extends React.Component {
   render() {
     return (
       <NavigationContainer>

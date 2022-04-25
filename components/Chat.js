@@ -1,11 +1,5 @@
 import React from "react";
-import {
-  View,
-  Text,
-  Platform,
-  KeyboardAvoidingView,
-  LogBox,
-} from "react-native";
+import { View, Platform, KeyboardAvoidingView, LogBox } from "react-native";
 import { Bubble, GiftedChat, InputToolbar } from "react-native-gifted-chat";
 const firebase = require("firebase");
 require("firebase/firestore");
@@ -183,10 +177,10 @@ export default class Chat extends React.Component {
         {...props}
         wrapperStyle={{
           right: {
-            backgroundColor: "#C3C5C8",
+            backgroundColor: "#956F6A",
           },
           left: {
-            backgroundColor: "#956F6A",
+            backgroundColor: "#C3C5C8",
           },
         }}
       />
@@ -251,7 +245,6 @@ export default class Chat extends React.Component {
           renderCustomActions={this.renderCustomActions}
           renderCustomView={this.renderCustomView}
         />
-        <Text>{this.state.loggedInText}</Text>
 
         {Platform.OS === "android" ? (
           <KeyboardAvoidingView behavior="height" />
