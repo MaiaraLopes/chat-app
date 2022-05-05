@@ -11,11 +11,11 @@ export default class CustomActions extends React.Component {
   //Choose image from the user's device
   pickImage = async () => {
     //Asking permission to access user's gallery
-    const { status } = await Permissions.askAsync(Permissions.MEDIA_LIBRARY);
+    const { status } = await ImagePicker.launchImageLibraryAsync();
     try {
       if (status === "granted") {
         let result = await ImagePicker.launchImageLibraryAsync({
-          mediaTypes: "Images",
+          mediaTypes: ImagePicker.MediaTypeOptions.Images,
         }).catch((error) => {
           console.log(error);
         });
@@ -33,14 +33,11 @@ export default class CustomActions extends React.Component {
   //Take a picture with the user's device
   takePhoto = async () => {
     //Asking permission to access user's camera
-    const { status } = await Permissions.askAsync(
-      Permissions.MEDIA_LIBRARY,
-      Permissions.CAMERA
-    );
+    const { status } = await ImagePicker.requestCameraPermissionsAsync();
     try {
       if (status === "granted") {
         let result = await ImagePicker.launchCameraAsync({
-          mediaTypes: "All",
+          mediaTypes: ImagePicker.MediaTypeOptions.All,
         }).catch((error) => {
           console.log(error);
         });
@@ -57,28 +54,21 @@ export default class CustomActions extends React.Component {
 
   //Upload image to Firestore
   uploadImageFetch = async (uri) => {
-    const blob = await new Promise((resolve, reject) => {
-      const xhr = new XMLHttpRequest();
-      xhr.onload = function () {
-        resolve(xhr.response);
-      };
-      xhr.onerror = function (e) {
-        console.log(e);
-        reject(new TypeError("Network request failed"));
-      };
-      xhr.responseType = "blob";
-      xhr.open("GET", uri, true);
-      xhr.send(null);
-    });
-    const imageNameBefore = uri.split("/");
-    const imageName = imageNameBefore[imageNameBefore.length - 1];
+    try {
+      const response = await fetch(uri);
+      const blob = await response.blob();
+      const imageNameBefore = uri.split("/");
+      const imageName = imageNameBefore[imageNameBefore.length - 1];
 
-    const ref = firebase.storage().ref().child(`images/${imageName}`);
-    const snapshot = await ref.put(blob);
+      const ref = firebase.storage().ref().child(`images/${imageName}`);
+      const snapshot = await ref.put(blob);
 
-    blob.close();
+      //blob.close();
 
-    return await snapshot.ref.getDownloadURL();
+      return await snapshot.ref.getDownloadURL();
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   //Get user's geolocation
@@ -169,6 +159,7 @@ const styles = StyleSheet.create({
     borderColor: "#b2b2b2",
     borderWidth: 2,
     flex: 1,
+    marginBottom: 4,
   },
 
   iconText: {

@@ -14,6 +14,7 @@ LogBox.ignoreLogs([
   "Setting a timer",
   "AsyncStorage has been extracted from react-native",
   "Possible Unhandled Promise Rejection",
+  "expo-permission is now deprecated",
 ]);
 
 const firebaseConfig = {
@@ -242,7 +243,7 @@ export default class Chat extends React.Component {
           onSend={(messages) => this.onSend(messages)}
           renderUsernameOnMessage={true}
           user={this.state.user}
-          renderCustomActions={this.renderCustomActions}
+          renderActions={this.renderCustomActions}
           renderCustomView={this.renderCustomView}
         />
 
