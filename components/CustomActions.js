@@ -1,6 +1,6 @@
 import React from "react";
 import PropTypes from "prop-types";
-import { StyleSheet, Text, ToutchableOpacity, View } from "react-native";
+import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import * as ImagePicker from "expo-image-picker";
 import * as Location from "expo-location";
 import * as Permissions from "expo-permissions";
@@ -141,7 +141,7 @@ export default class CustomActions extends React.Component {
 
   render() {
     return (
-      <ToutchableOpacity
+      <TouchableOpacity
         accessible={true}
         accessibilityLabel="More options"
         accessibilityHint="Lets you choose to send an image or your geolocation."
@@ -151,7 +151,7 @@ export default class CustomActions extends React.Component {
         <View style={[styles.wrapper, this.props.wrapperStyle]}>
           <Text style={[styles.iconText, this.props.iconTextStyle]}>+</Text>
         </View>
-      </ToutchableOpacity>
+      </TouchableOpacity>
     );
   }
 }
