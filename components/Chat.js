@@ -15,6 +15,7 @@ LogBox.ignoreLogs([
   "AsyncStorage has been extracted from react-native",
   "Possible Unhandled Promise Rejection",
   "expo-permission is now deprecated",
+  "Animated.event now requires a second argument for options",
 ]);
 
 const firebaseConfig = {
@@ -112,7 +113,7 @@ export default class Chat extends React.Component {
           name: data.user.name,
           avatar: data.user.avatar,
         },
-        iamge: data.image || null,
+        image: data.image || null,
         location: data.location || null,
       });
     });
