@@ -27,3 +27,9 @@ This is an app for users to be able to chat to one another.
 * Install Expo globally using `npm install --global expo-cli` or `yarn install --global expo-cli`
 * Run `expo start` in the terminal to start the app
 * Use Android Studio to run an emulator or Expo Go on your smartphone to run the app
+
+## Screenshot and video
+Click [here](https://imgur.com/a/RJveDin) to see the app in action.
+
+[![Screenshot-20220506-194722-host-exp-exponent.jpg](https://i.postimg.cc/s2qFJN5F/Screenshot-20220506-194722-host-exp-exponent.jpg)](https://postimg.cc/ns4wFTdT)
+
