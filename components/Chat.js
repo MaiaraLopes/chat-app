@@ -18,6 +18,9 @@ LogBox.ignoreLogs([
   "Animated.event now requires a second argument for options",
 ]);
 
+//Ignoring all warning messages
+//LogBox.ignoreAllLogs();
+
 const firebaseConfig = {
   apiKey: "AIzaSyDuygtWlbCPsFf3xQu4mT2iwMpYRkRRnT8",
   authDomain: "test-56849.firebaseapp.com",

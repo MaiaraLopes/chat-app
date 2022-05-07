@@ -132,10 +132,10 @@ const styles = StyleSheet.create({
   },
 
   titleBox: {
-    height: "50%",
+    height: "25%",
     width: "88%",
     alignItems: "center",
-    paddingTop: 100,
+    marginBottom: "25%",
   },
 
   title: {
@@ -147,6 +147,7 @@ const styles = StyleSheet.create({
   box: {
     backgroundColor: "white",
     height: "44%",
+    minHeight: 230,
     width: "88%",
     justifyContent: "space-around",
     alignItems: "center",
