@@ -28,7 +28,8 @@ This is an app for users to be able to chat to one another.
 * Install Expo globally using `npm install --global expo-cli` or `yarn install --global expo-cli`
 * Run `expo start` in the terminal to start the app
 * Use Android Studio to run an emulator or Expo Go on your smartphone to run the app
-  * [Optional] If you want to use your own firestore database, create a new firebase app, setup firestore and replace the firebase configuration object `firebaseConfig` in components/Chat.js file with the one you get after setting up your firebase app.   
+
+* [Optional] If you want to use your own firestore database, create a new firebase app, setup firestore and replace the firebase configuration object `firebaseConfig` in components/Chat.js file with the one you get after setting up your firebase app.   
 
 ## Screenshot and video
 Click [here](https://vimeo.com/707260040) to see the app in action.
