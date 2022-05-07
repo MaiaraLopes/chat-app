@@ -10,16 +10,16 @@ import MapView from "react-native-maps";
 import CustomActions from "./CustomActions";
 
 //Ignoring warning messages in the app
-LogBox.ignoreLogs([
-  "Setting a timer",
-  "AsyncStorage has been extracted from react-native",
-  "Possible Unhandled Promise Rejection",
-  "expo-permission is now deprecated",
-  "Animated.event now requires a second argument for options",
-]);
+// LogBox.ignoreLogs([
+//   "Setting a timer",
+//   "AsyncStorage has been extracted from react-native",
+//   "Possible Unhandled Promise Rejection",
+//   "expo-permission is now deprecated",
+//   "Animated.event now requires a second argument for options",
+// ]);
 
 //Ignoring all warning messages
-//LogBox.ignoreAllLogs();
+LogBox.ignoreAllLogs();
 
 const firebaseConfig = {
   apiKey: "AIzaSyDuygtWlbCPsFf3xQu4mT2iwMpYRkRRnT8",
