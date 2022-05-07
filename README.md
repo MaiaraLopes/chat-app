@@ -15,7 +15,7 @@ This is an app for users to be able to chat to one another.
 
 * React Native
 * Expo
-* Google Firebase (FireStore, Authentication and Cloud Storage)
+* Firebase (FireStore, Authentication and Cloud Storage)
 * GiftedChat
 ## Installation
 
